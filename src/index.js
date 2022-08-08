@@ -7,32 +7,46 @@ const main = document.getElementById("main");
 
 const postionParam = {
   options: {
-    enableHighAccuracy: false,
+    enableHighAccuracy: true,
     timeout: 5000,
     maximumAge: 0,
   },
 };
 
 async function location() {
-  const response = await new Promise((resolve, reject) =>
+  const response = await new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      resolve,
-      reject,
+      (position) => {
+        resolve(position.coords);
+      },
+      (error) => {
+        reject(error);
+      },
       postionParam.options
-    )
-  );
-  return response;
+    );
+  });
 }
 
 async function localweather() {
-  const pos = await location();
-  let lat = Math.floor(pos.coords.latitude * 1000) / 1000;
-  let lon = Math.floor(pos.coords.longitude * 1000) / 1000;
-  console.log(lat, lon);
-  const weather = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
-  );
-  console.log(await weather.json());
+  let weather;
+  try {
+    const posPromise = await location();
+    let lat = Math.floor(pos.coords.latitude * 1000) / 1000;
+    let lon = Math.floor(pos.coords.longitude * 1000) / 1000;
+    weather = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
+    );
+  } catch (e) {
+    console.error(e);
+    weather = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=Mendoza&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
+    );
+  }
+  let localWeather = await weather.json();
+  console.log(localWeather);
+}
+
+async function localForecast() {
   const weatherForecast = await fetch(
     `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
   );
