@@ -1,10 +1,10 @@
 import "./style.scss";
 
 // api call example https://api.openweathermap.org/data/2.5/weather?q=London,uk&callback=test&appid=d11947c85c8c62e4c1cdf9c292dc17d0
-//API key = d11947c85c8c62e4c1cdf9c292dc17d0
-
+const APIkey = "d11947c85c8c62e4c1cdf9c292dc17d0";
 const main = document.getElementById("main");
-
+let city = "London";
+let units = "metric";
 const postionParam = {
   options: {
     enableHighAccuracy: true,
@@ -16,48 +16,93 @@ const postionParam = {
 async function location() {
   const response = await new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve(position.coords);
-      },
-      (error) => {
-        reject(error);
-      },
+      resolve,
+      reject,
       postionParam.options
     );
   });
+  return response;
 }
 
 async function localweather() {
   let weather;
   try {
-    const posPromise = await location();
+    const pos = await location();
     let lat = Math.floor(pos.coords.latitude * 1000) / 1000;
     let lon = Math.floor(pos.coords.longitude * 1000) / 1000;
     weather = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIkey}&units=${units}`
     );
   } catch (e) {
-    console.error(e);
     weather = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=Mendoza&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}&units=${units}`
     );
   }
   let localWeather = await weather.json();
   console.log(localWeather);
+  return localWeather;
 }
 
 async function localForecast() {
-  const weatherForecast = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=d11947c85c8c62e4c1cdf9c292dc17d0&units=metric`
-  );
-  console.log(await weatherForecast.json());
+  let weatherForecast;
+  try {
+    const pos = await location();
+    let lat = Math.floor(pos.coords.latitude * 1000) / 1000;
+    let lon = Math.floor(pos.coords.longitude * 1000) / 1000;
+    weatherForecast = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIkey}&units=${units}`
+    );
+  } catch (e) {
+    weatherForecast = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}&units=${units}`
+    );
+  }
+  let localWeatherForecast = await weatherForecast.json();
+  console.log(localWeatherForecast);
+  return localWeatherForecast;
 }
 
 function userLocationBtn() {
   let btn = document.createElement("button");
   btn.className = "userLocationBtn";
   btn.innerText = "Get Weather";
-  btn.addEventListener("click", localweather);
+  btn.addEventListener("click", renderLocalWeather);
   return btn;
 }
+
+function checkUnits() {
+  if (units == "metric") {
+    return "C";
+  } else {
+    return "F";
+  }
+}
+
+async function renderLocalWeather() {
+  const erase = document.getElementById("weatherCard");
+  const weatherCard = document.createElement("div");
+  weatherCard.id = "weatherCard";
+  try {
+    const weatherData = await localweather();
+    let type = document.createElement("p");
+    type.innerText = `Local Weather: ${weatherData.weather[0].main}, ${weatherData.weather[0].description}`;
+    let actualCity = document.createElement("p");
+    actualCity.innerText = `City: ${weatherData.name}`;
+    let temp = document.createElement("p");
+    temp.innerText = `Temperature: ${weatherData.main.temp}°${checkUnits()}`;
+    let humidity = document.createElement("p");
+    humidity.innerText = `Humidity: ${weatherData.main.humidity}%`;
+    weatherCard.appendChild(actualCity);
+    weatherCard.appendChild(type);
+    weatherCard.appendChild(temp);
+    weatherCard.appendChild(humidity);
+    if (erase != null) {
+      erase.parentNode.removeChild(erase);
+    }
+    main.appendChild(weatherCard);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 main.appendChild(userLocationBtn());
