@@ -1,5 +1,6 @@
 import "./style.scss";
 import date from "date-and-time";
+import loadingImg from "./img/loading.gif";
 
 // api call example https://api.openweathermap.org/data/2.5/weather?q=London,uk&callback=test&appid=d11947c85c8c62e4c1cdf9c292dc17d0
 const APIkey = "d11947c85c8c62e4c1cdf9c292dc17d0";
@@ -136,6 +137,7 @@ async function renderWeather(search) {
     } else {
       weatherData = await cityWeather(search);
     }
+    removeNode("loadingWeather");
     let type = document.createElement("p");
     type.innerText = `Local Weather: ${weatherData.weather[0].main}, ${weatherData.weather[0].description}`;
     let actualCity = document.createElement("p");
@@ -165,6 +167,19 @@ async function renderWeather(search) {
   }
 }
 
+function loading(id) {
+  let loading = document.createElement("img");
+  loading.className = "loading";
+  loading.src = loadingImg;
+  loading.id = id;
+  return loading;
+}
+
+function removeNode(id) {
+  let node = document.getElementById(`${id}`);
+  node.parentNode.removeChild(node);
+}
+
 async function renderForecast(search) {
   const erase = document.getElementById("forecast");
   const forecast = document.createElement("div");
@@ -178,6 +193,7 @@ async function renderForecast(search) {
     }
     let lastDay;
     let currentContainer;
+    removeNode("loadingForecast");
     for (let i = 0; i < weatherData.list.length; i++) {
       let dateHour = document.createElement("p");
       let dateDay = document.createElement("p");
@@ -355,7 +371,9 @@ function render() {
   form.appendChild(userLocationBtn());
   let currentWeather = document.createElement("div");
   currentWeather.id = "currentWeather";
+  currentWeather.appendChild(loading("loadingWeather"));
   let forecastWrapper = document.createElement("div");
+  forecastWrapper.appendChild(loading("loadingForecast"));
   forecastWrapper.id = "forecastWrapper";
   weatherWrapper.appendChild(title);
   weatherWrapper.appendChild(currentWeather);
