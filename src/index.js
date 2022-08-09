@@ -33,7 +33,25 @@ async function location() {
   return response;
 }
 
-async function localweather() {
+function showError() {
+  let lastError = document.getElementById("error");
+  if (lastError != null) {
+    lastError.parentNode.removeChild(lastError);
+  }
+  let errorDiv = document.createElement("div");
+  errorDiv.id = "error";
+  errorDiv.innerText = "Your search yielded no result.";
+  let remove = document.createElement("button");
+  remove.innerText = "X";
+  remove.style.backgroundColor = "red";
+  remove.addEventListener("click", () => {
+    errorDiv.parentNode.removeChild(errorDiv);
+  });
+  errorDiv.appendChild(remove);
+  main.appendChild(errorDiv);
+}
+
+async function localWeather() {
   let weather;
   try {
     const pos = await location();
@@ -46,10 +64,28 @@ async function localweather() {
     weather = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}&units=${units}`
     );
+    showError();
   }
   let localWeather = await weather.json();
   console.log(localWeather);
   return localWeather;
+}
+
+async function cityWeather(search) {
+  let weather;
+  try {
+    weather = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${APIkey}&units=${units}`
+    );
+  } catch (e) {
+    weather = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}&units=${units}`
+    );
+    showError();
+  }
+  let cityWeather = await weather.json();
+  console.log(cityWeather);
+  return cityWeather;
 }
 
 async function localForecast() {
@@ -65,18 +101,41 @@ async function localForecast() {
     weatherForecast = await fetch(
       `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}&units=${units}`
     );
+    showError();
   }
   let localWeatherForecast = await weatherForecast.json();
   console.log(localWeatherForecast);
   return localWeatherForecast;
 }
 
-async function renderLocalWeather() {
+async function cityForecast(search) {
+  let weatherForecast;
+  try {
+    weatherForecast = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${search}&appid=${APIkey}&units=${units}`
+    );
+  } catch (e) {
+    weatherForecast = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}&units=${units}`
+    );
+    showError();
+  }
+  let cityWeatherForecast = await weatherForecast.json();
+  console.log(cityWeatherForecast);
+  return cityWeatherForecast;
+}
+
+async function renderWeather(search) {
   const erase = document.getElementById("weatherCard");
   const weatherCard = document.createElement("div");
   weatherCard.id = "weatherCard";
   try {
-    const weatherData = await localweather();
+    let weatherData;
+    if (search == false) {
+      weatherData = await localWeather();
+    } else {
+      weatherData = await cityWeather(search);
+    }
     let type = document.createElement("p");
     type.innerText = `Local Weather: ${weatherData.weather[0].main}, ${weatherData.weather[0].description}`;
     let actualCity = document.createElement("p");
@@ -106,12 +165,17 @@ async function renderLocalWeather() {
   }
 }
 
-async function renderLocalForecast() {
+async function renderForecast(search) {
   const erase = document.getElementById("forecast");
   const forecast = document.createElement("div");
   forecast.id = "forecast";
   try {
-    const weatherData = await localForecast();
+    let weatherData;
+    if (search == false) {
+      weatherData = await localForecast();
+    } else {
+      weatherData = await cityForecast(search);
+    }
     let lastDay;
     let currentContainer;
     for (let i = 0; i < weatherData.list.length; i++) {
@@ -212,8 +276,21 @@ async function renderLocalForecast() {
 
 async function renderLocal() {
   try {
-    main.appendChild(await renderLocalWeather());
-    main.appendChild(await renderLocalForecast());
+    let currentWeather = document.getElementById("currentWeather");
+    let forecastWrapper = document.getElementById("forecastWrapper");
+    currentWeather.appendChild(await renderWeather(false));
+    forecastWrapper.appendChild(await renderForecast(false));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function renderCity(search) {
+  try {
+    let currentWeather = document.getElementById("currentWeather");
+    let forecastWrapper = document.getElementById("forecastWrapper");
+    currentWeather.appendChild(await renderWeather(search));
+    forecastWrapper.appendChild(await renderForecast(search));
   } catch (error) {
     console.log(error);
   }
@@ -222,9 +299,61 @@ async function renderLocal() {
 function userLocationBtn() {
   let btn = document.createElement("button");
   btn.className = "userLocationBtn";
-  btn.innerText = "Get Weather";
-  btn.addEventListener("click", renderLocal());
+  btn.innerText = "Local Weather";
+  btn.type = "button";
+  btn.addEventListener("click", renderLocal);
   return btn;
 }
 
-main.appendChild(userLocationBtn());
+function render() {
+  let weatherWrapper = document.createElement("div");
+  weatherWrapper.id = "weatherWrapper";
+  let form = document.createElement("form");
+  form.id = "selectCity";
+  form.method = "get";
+  form.action = "";
+  let title = document.createElement("h1");
+  title.innerText = "Weather Forecast";
+  let cityContainer = document.createElement("div");
+  cityContainer.id = "cityContainer";
+  let label = document.createElement("label");
+  label.for = "city";
+  label.innerText = "Search a City:";
+  let cityInt = document.createElement("input");
+  cityInt.id = "cityInt";
+  cityInt.type = "text";
+  cityInt.placeholder = "Mendoza";
+  cityInt.name = "city";
+  cityContainer.appendChild(label);
+  cityContainer.appendChild(cityInt);
+  form.appendChild(cityContainer);
+  let submit = document.createElement("button");
+  submit.className = "submit";
+  submit.innerText = "Search City";
+  submit.type = "button";
+  submit.addEventListener("click", () => {
+    let form = document.getElementById("selectCity");
+    renderCity(form.city.value);
+  });
+  form.appendChild(submit);
+  form.appendChild(userLocationBtn());
+  let currentWeather = document.createElement("div");
+  currentWeather.id = "currentWeather";
+  let forecastWrapper = document.createElement("div");
+  forecastWrapper.id = "forecastWrapper";
+  weatherWrapper.appendChild(title);
+  weatherWrapper.appendChild(currentWeather);
+  weatherWrapper.appendChild(form);
+  weatherWrapper.appendChild(forecastWrapper);
+  let footer = document.createElement("div");
+  footer.id = "footer";
+  let footText = document.createElement("h5");
+  footText.id = "footText";
+  footText.innerText = "Crafted by Haervwe";
+  footer.appendChild(footText);
+  main.appendChild(weatherWrapper);
+  main.appendChild(footer);
+}
+
+render();
+renderLocal();
