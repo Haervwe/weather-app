@@ -12,24 +12,57 @@ body {
   #weatherWrapper {
     display: grid;
     height: 92vh;
-    grid-template-rows: 2fr 1fr 2fr;
+    width: 100%;
+    grid-template-rows: 2fr 9fr 1fr 12fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: center;
     #forecastWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 90vw;
+      margin-left: 5%;
+      margin-right: 5%;
       #forecast {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+        justify-items: center;
+        align-items: center;
+        gap: 10px;
         .weatherForecastCard {
           display: grid;
+          align-items: center;
+          height: 90%;
           justify-items: center;
           grid-template-columns: 1fr 1fr;
-          grid-template-rows: 1fr 2fr 5fr;
+          grid-template-rows: 1fr 3fr 8fr;
           .day {
             grid-column: 1/3;
             grid-row: 1/2;
             margin: 0px;
+            justify-content: center;
+            align-content: center;
           }
           .weatherIcon {
             grid-column: 1/3;
             grid-row: 2/3;
+          }
+          .forecastContainer {
+            .hourContainer {
+              p {
+                margin: 2px;
+              }
+            }
+          }
+          .data {
+            .dataWrap {
+              p {
+                margin: 2px;
+              }
+            }
           }
         }
       }

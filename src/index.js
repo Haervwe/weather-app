@@ -212,7 +212,7 @@ async function renderForecast(search) {
         let hourContainer = document.createElement("div");
         hourContainer.className = "hourContainer";
         let type = document.createElement("p");
-        type.innerText = `${weatherData.list[i].weather[0].main}, ${weatherData.list[i].weather[0].description}`;
+        type.innerText = `Weather: ${weatherData.list[i].weather[0].description}`;
         let temp = document.createElement("p");
         temp.innerText = `Temp: ${
           weatherData.list[i].main.temp
@@ -220,7 +220,7 @@ async function renderForecast(search) {
         let humidity = document.createElement("p");
         humidity.innerText = `Humidity: ${weatherData.list[i].main.humidity}%`;
         let dataWrap = document.createElement("div");
-        dataWrap.className = "dataWrap";
+        dataWrap.className = `dataWrap ${thisDay}`;
         dataWrap.style.display = "none";
         hourContainer.appendChild(dateHour);
         dataWrap.appendChild(type);
@@ -242,7 +242,7 @@ async function renderForecast(search) {
           let currentIcon = document.getElementById(`img${thisDay}`);
           currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
           reset = currentIcon.src;
-          let wrapList = document.querySelectorAll(".dataWrap");
+          let wrapList = document.querySelectorAll(`.${thisDay}`);
           wrapList.forEach((wrap) => (wrap.style.display = "none"));
           dataWrap.style.display = "grid";
         });
@@ -259,7 +259,7 @@ async function renderForecast(search) {
         let hourContainer = document.createElement("div");
         hourContainer.className = "hourContainer";
         let type = document.createElement("p");
-        type.innerText = `${weatherData.list[i].weather[0].main}, ${weatherData.list[i].weather[0].description}`;
+        type.innerText = `Weather: ${weatherData.list[i].weather[0].description}`;
         let temp = document.createElement("p");
         temp.innerText = `Temp: ${
           weatherData.list[i].main.temp
@@ -271,8 +271,8 @@ async function renderForecast(search) {
         icon.id = `img${thisDay}`;
         icon.className = "weatherIcon";
         let dataWrap = document.createElement("div");
-        dataWrap.className = "dataWrap";
-        dataWrap.style.display = "none";
+        dataWrap.className = `dataWrap ${thisDay}`;
+        dataWrap.style.display = "grid";
         weatherCard.appendChild(dateDay);
         weatherCard.appendChild(icon);
         hourContainer.appendChild(dateHour);
@@ -297,7 +297,7 @@ async function renderForecast(search) {
           let currentIcon = document.getElementById(`img${thisDay}`);
           currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
           reset = currentIcon.src;
-          let wrapList = document.querySelectorAll(".dataWrap");
+          let wrapList = document.querySelectorAll(`.${thisDay}`);
           wrapList.forEach((wrap) => (wrap.style.display = "none"));
           dataWrap.style.display = "grid";
         });
