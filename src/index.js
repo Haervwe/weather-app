@@ -92,6 +92,9 @@ async function renderLocalWeather() {
     temp.innerText = `Temperature: ${weatherData.main.temp}°${checkUnits()}`;
     let humidity = document.createElement("p");
     humidity.innerText = `Humidity: ${weatherData.main.humidity}%`;
+    let icon = document.createElement("img");
+    icon.src = `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`;
+    weatherCard.appendChild(icon);
     weatherCard.appendChild(actualCity);
     weatherCard.appendChild(type);
     weatherCard.appendChild(temp);
@@ -100,6 +103,44 @@ async function renderLocalWeather() {
       erase.parentNode.removeChild(erase);
     }
     main.appendChild(weatherCard);
+    renderLocalForecast();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function renderLocalForecast() {
+  const erase = document.getElementById("forecast");
+  const forecast = document.createElement("div");
+  forecast.id = "forecast";
+  try {
+    const weatherData = await localForecast();
+    for (let i = 0; i < weatherData.list.length; i++) {
+      let weatherCard = document.createElement("div");
+      weatherCard.className = "weatherForecastCard";
+      let type = document.createElement("p");
+      type.innerText = `Local Weather: ${weatherData.list[i].weather[0].main}, ${weatherData.list[i].weather[0].description}`;
+      //let actualCity = document.createElement("p");
+      //actualCity.innerText = `City: ${weatherData.name}`;
+      let temp = document.createElement("p");
+      temp.innerText = `Temperature: ${
+        weatherData.list[i].main.temp
+      }°${checkUnits()}`;
+      let humidity = document.createElement("p");
+      humidity.innerText = `Humidity: ${weatherData.list[i].main.humidity}%`;
+      let icon = document.createElement("img");
+      icon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
+      weatherCard.appendChild(icon);
+      //weatherCard.appendChild(actualCity);
+      weatherCard.appendChild(type);
+      weatherCard.appendChild(temp);
+      weatherCard.appendChild(humidity);
+      forecast.appendChild(weatherCard);
+    }
+    if (erase != null) {
+      erase.parentNode.removeChild(erase);
+    }
+    main.appendChild(forecast);
   } catch (e) {
     console.log(e);
   }
