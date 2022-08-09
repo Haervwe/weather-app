@@ -144,7 +144,7 @@ async function renderWeather(search) {
     actualCity.innerText = `City: ${weatherData.name}`;
     let dateP = document.createElement("p");
     let now = new Date();
-    const pattern = date.compile("dddd, MMMM DD YYYY, HH:MM");
+    const pattern = date.compile("dddd, MMMM DD YYYY, HH:mm");
     dateP.innerText = date.format(now, pattern);
     let temp = document.createElement("p");
     temp.innerText = `Temperature: ${weatherData.main.temp}°${checkUnits()}`;
@@ -203,7 +203,7 @@ async function renderForecast(search) {
         `${weatherData.list[i].dt_txt}`,
         `YYYY-MM-DD hh:mm:ss`
       );
-      const pattern = date.compile("HH:MM");
+      const pattern = date.compile("HH:mm");
       dateHour.innerText = `${date.format(dt, pattern)} hs.`;
       const patternReduced = date.compile("dddd");
       let thisDay = date.format(dt, patternReduced);
