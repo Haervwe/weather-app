@@ -220,6 +220,9 @@ async function renderForecast(search) {
           currentIcon.src = reset;
         });
         innerContainer.addEventListener("click", () => {
+          let currentIcon = document.getElementById(`img${thisDay}`);
+          currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
+          reset = currentIcon.src;
           let wrapList = document.querySelectorAll(".innerWrap");
           wrapList.forEach((wrap) => (wrap.style.display = "none"));
           innerWrap.style.display = "grid";
@@ -257,7 +260,20 @@ async function renderForecast(search) {
         innerContainer.appendChild(innerWrap);
         container.appendChild(innerContainer);
         weatherCard.appendChild(container);
+        let reset;
+        innerContainer.addEventListener("mouseenter", () => {
+          let currentIcon = document.getElementById(`img${thisDay}`);
+          reset = currentIcon.src;
+          currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
+        });
+        innerContainer.addEventListener("mouseleave", () => {
+          let currentIcon = document.getElementById(`img${thisDay}`);
+          currentIcon.src = reset;
+        });
         innerContainer.addEventListener("click", () => {
+          let currentIcon = document.getElementById(`img${thisDay}`);
+          currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
+          reset = currentIcon.src;
           let wrapList = document.querySelectorAll(".innerWrap");
           wrapList.forEach((wrap) => (wrap.style.display = "none"));
           innerWrap.style.display = "grid";
