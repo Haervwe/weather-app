@@ -1,1 +1,38 @@
-
+* {
+  user-select: none;
+}
+body {
+  margin: 0%;
+  padding: 0px;
+}
+#main {
+  display: grid;
+  height: 100%;
+  grid-template-rows: 92vh 8vh;
+  #weatherWrapper {
+    display: grid;
+    height: 92vh;
+    grid-template-rows: 2fr 1fr 2fr;
+    #forecastWrapper {
+      #forecast {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        .weatherForecastCard {
+          display: grid;
+          justify-items: center;
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 1fr 2fr 5fr;
+          .day {
+            grid-column: 1/3;
+            grid-row: 1/2;
+            margin: 0px;
+          }
+          .weatherIcon {
+            grid-column: 1/3;
+            grid-row: 2/3;
+          }
+        }
+      }
+    }
+  }
+}
