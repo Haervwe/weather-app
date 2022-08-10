@@ -127,13 +127,15 @@ async function cityForecast(search) {
 }
 
 async function renderWeather(search) {
-  const erase = document.getElementById("weatherCard");
+  let currentWeather = document.getElementById("currentWeather");
+  const erase = document.getElementById("weatherCardLocal");
   if (erase != null) {
     erase.parentNode.appendChild(loading("loadingWeather"));
     erase.parentNode.removeChild(erase);
   }
   const weatherCard = document.createElement("div");
-  weatherCard.id = "weatherCard";
+  weatherCard.className = "weatherCard";
+  weatherCard.id = "weatherCardLocal";
   try {
     let weatherData;
     if (search == false) {
@@ -147,22 +149,28 @@ async function renderWeather(search) {
     let actualCity = document.createElement("p");
     actualCity.innerText = `City: ${weatherData.name}`;
     let dateP = document.createElement("p");
+    dateP.className = "date";
     let now = new Date();
     const pattern = date.compile("dddd, MMMM DD YYYY, HH:mm");
     dateP.innerText = date.format(now, pattern);
     let temp = document.createElement("p");
+    temp.className = "temp";
     temp.innerText = `Temperature: ${weatherData.main.temp}°${checkUnits()}`;
     let humidity = document.createElement("p");
+    humidity.className = "humidity";
     humidity.innerText = `Humidity: ${weatherData.main.humidity}%`;
     let icon = document.createElement("img");
     icon.src = `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`;
     weatherCard.appendChild(dateP);
-    weatherCard.appendChild(icon);
     weatherCard.appendChild(actualCity);
+    weatherCard.appendChild(icon);
     weatherCard.appendChild(type);
     weatherCard.appendChild(temp);
     weatherCard.appendChild(humidity);
-    return weatherCard;
+    currentWeather.appendChild(weatherCard);
+    setTimeout(function () {
+      weatherCard.className = "weatherCard after";
+    }, 50);
   } catch (e) {
     console.log(e);
   }
@@ -184,6 +192,7 @@ function removeNode(id) {
 }
 
 async function renderForecast(search) {
+  let forecastWrapper = document.getElementById("forecastWrapper");
   const erase = document.getElementById("forecast");
   if (erase != null) {
     erase.parentNode.appendChild(loading("loadingForecast"));
@@ -202,6 +211,7 @@ async function renderForecast(search) {
     let currentContainer;
     let currentData;
     removeNode("loadingForecast");
+    forecastWrapper.appendChild(forecast);
     for (let i = 0; i < weatherData.list.length; i++) {
       let dateHour = document.createElement("p");
       let dateDay = document.createElement("p");
@@ -250,8 +260,27 @@ async function renderForecast(search) {
           currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
           reset = currentIcon.src;
           let wrapList = document.querySelectorAll(`.${thisDay}`);
-          wrapList.forEach((wrap) => (wrap.style.display = "none"));
+          wrapList.forEach((elwrap) => {
+            let wrap = elwrap;
+            if (dataWrap !== elwrap) {
+              wrap.className = `dataWrap ${thisDay}`;
+              setTimeout(function () {
+                wrap.style.display = "none";
+              }, 200);
+            }
+          });
+          let hourList = document.querySelectorAll(`.hourContainer${thisDay}`);
+          hourList.forEach((elwrap) => {
+            let wrap = elwrap;
+            if (hourContainer !== elwrap) {
+              wrap.className = `hourContainer hourContainer${thisDay}`;
+            }
+          });
           dataWrap.style.display = "grid";
+          dataWrap.className = `dataWrap ${thisDay} active`;
+          setTimeout(function () {
+            hourContainer.className = `hourContainer hourContainer${thisDay} active`;
+          }, 100);
         });
       } else {
         let data = document.createElement("div");
@@ -264,7 +293,7 @@ async function renderForecast(search) {
         container.className = "forecastContainer";
         currentContainer = container;
         let hourContainer = document.createElement("div");
-        hourContainer.className = "hourContainer";
+        hourContainer.className = `hourContainer hourContainer${thisDay} active`;
         let type = document.createElement("p");
         type.innerText = `Weather: ${weatherData.list[i].weather[0].description}`;
         let temp = document.createElement("p");
@@ -278,7 +307,7 @@ async function renderForecast(search) {
         icon.id = `img${thisDay}`;
         icon.className = "weatherIcon";
         let dataWrap = document.createElement("div");
-        dataWrap.className = `dataWrap ${thisDay}`;
+        dataWrap.className = `dataWrap ${thisDay} active`;
         dataWrap.style.display = "grid";
         weatherCard.appendChild(dateDay);
         weatherCard.appendChild(icon);
@@ -305,36 +334,52 @@ async function renderForecast(search) {
           currentIcon.src = `http://openweathermap.org/img/wn/${weatherData.list[i].weather[0].icon}@2x.png`;
           reset = currentIcon.src;
           let wrapList = document.querySelectorAll(`.${thisDay}`);
-          wrapList.forEach((wrap) => (wrap.style.display = "none"));
+          wrapList.forEach((elwrap) => {
+            let wrap = elwrap;
+            if (dataWrap !== elwrap) {
+              wrap.className = `dataWrap ${thisDay}`;
+              setTimeout(function () {
+                wrap.style.display = "none";
+              }, 200);
+            }
+          });
+          let hourList = document.querySelectorAll(`.hourContainer${thisDay}`);
+          hourList.forEach((elwrap) => {
+            let wrap = elwrap;
+            if (hourContainer !== elwrap) {
+              wrap.className = `hourContainer hourContainer${thisDay}`;
+            }
+          });
           dataWrap.style.display = "grid";
+          dataWrap.className = `dataWrap ${thisDay} active`;
+          setTimeout(function () {
+            hourContainer.className = `hourContainer hourContainer${thisDay} active`;
+          }, 100);
         });
         forecast.appendChild(weatherCard);
+        setTimeout(function () {
+          weatherCard.className = "weatherForecastCard after";
+        }, 10 * i);
       }
     }
-
-    return forecast;
   } catch (e) {
     console.log(e);
   }
 }
 
-async function renderLocal() {
+function renderLocal() {
   try {
-    let currentWeather = document.getElementById("currentWeather");
-    let forecastWrapper = document.getElementById("forecastWrapper");
-    currentWeather.appendChild(await renderWeather(false));
-    forecastWrapper.appendChild(await renderForecast(false));
+    renderWeather(false);
+    renderForecast(false);
   } catch (error) {
     console.log(error);
   }
 }
 
-async function renderCity(search) {
+function renderCity(search) {
   try {
-    let currentWeather = document.getElementById("currentWeather");
-    let forecastWrapper = document.getElementById("forecastWrapper");
-    currentWeather.appendChild(await renderWeather(search));
-    forecastWrapper.appendChild(await renderForecast(search));
+    renderWeather(search);
+    renderForecast(search);
   } catch (error) {
     console.log(error);
   }

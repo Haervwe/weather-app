@@ -5,38 +5,91 @@
 body {
   margin: 0%;
   padding: 0px;
-  height: 100vh;
-  width: 100vw;
+  overflow-x: hidden;
 }
 #main {
   display: grid;
   height: 100%;
-  grid-template-rows: 92vh 8vh;
+  grid-template-rows: minmax(95%, 880px) minmax(5%, 25px);
   #weatherWrapper {
     display: grid;
-    height: 92vh;
+    height: 100%;
     width: 100%;
     max-width: 100%;
-    grid-template-rows: 2fr 9fr 1fr 12fr;
+    grid-template-rows: 1fr 9fr 2fr 13fr;
     grid-template-columns: 1fr;
     justify-items: center;
     align-content: center;
+    h1 {
+      margin: 5px;
+    }
+    #currentWeather {
+      .weatherCard {
+        display: grid;
+        gap: 10px;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+        background-color: rgba($color: #000000, $alpha: 0.2);
+        border-radius: 15px;
+        box-shadow: 0px 0px 5px black;
+        margin: 10px;
+        padding: 10px;
+        opacity: 0;
+        transition: opacity 500ms ease-in-out;
+        p {
+          margin-top: 2px;
+          margin-bottom: 2px;
+        }
+      }
+      .after {
+        opacity: 1;
+      }
+    }
+    #selectCity {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(150px, 20vw));
+      grid-template-rows: 3fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      #cityContainer {
+        display: grid;
+        grid-column: 1/3;
+        grid-template-rows: 1fr 2fr;
+        justify-items: center;
+        align-items: center;
+        #cityInt {
+          width: 100%;
+          height: 70%;
+          background-color: rgba($color: #000000, $alpha: 0.05);
+          border-radius: 15px;
+          border: none;
+          box-shadow: 0px 0px 3px black;
+          text-align: center;
+        }
+      }
+    }
     #forecastWrapper {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      height: 100%;
       align-items: center;
       width: 100vw;
       overflow-x: auto;
-      overflow-y: hidden;
+      padding-top: 15px;
+      padding-bottom: 15px;
       #loadingForecast {
         margin: auto;
       }
       #forecast {
         display: grid;
-        height: 46vh;
-        margin-left: 5%;
-        margin-right: 5%;
-        min-width: 960px;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        margin-left: auto;
+        margin-right: auto;
+        padding: 5px;
+        overflow-y: visible;
+        min-width: 1380px;
+        grid-template-columns: repeat(6, 1fr);
         grid-template-rows: 1fr;
         justify-items: center;
         align-items: center;
@@ -44,10 +97,16 @@ body {
         .weatherForecastCard {
           display: grid;
           align-items: center;
-          height: 90%;
           justify-items: center;
-          grid-template-columns: 1fr 1fr;
-          grid-template-rows: 1fr 3fr 8fr;
+          width: 220px;
+          grid-template-columns: 2fr 3fr;
+          grid-template-rows: 1fr 3fr 6fr;
+          padding: 10px;
+          opacity: 0;
+          background-color: rgba($color: #000000, $alpha: 0.2);
+          border-radius: 15px;
+          box-shadow: 0px 0px 5px black;
+          transition: opacity 500ms ease-in-out;
           .day {
             grid-column: 1/3;
             grid-row: 1/2;
@@ -60,19 +119,59 @@ body {
             grid-row: 2/3;
           }
           .forecastContainer {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(10, 1fr);
+            height: 180px;
+            padding: 5px;
+            align-items: center;
+            width: 100%;
             .hourContainer {
+              transition: background-color 200ms ease-in-out;
               p {
                 margin: 2px;
               }
+              border-radius: 3px;
+            }
+            .active {
+              background-color: rgba($color: #f7f4f4, $alpha: 0.5);
             }
           }
           .data {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+            height: 100%;
+            width: 100%;
+            align-items: center;
             .dataWrap {
+              display: grid;
+              grid-row: 1/2;
+              grid-column: 1/2;
+              align-items: center;
+              padding: 5px;
+              height: 180px;
+              width: 100%;
+              grid-template-rows: 1fr 1fr 1fr;
+              transition: opacity 200ms ease-in-out;
+              opacity: 0;
+              border-radius: 3px;
+              background-color: rgba($color: #f7f4f4, $alpha: 0.5);
               p {
                 margin: 2px;
               }
             }
+            .active {
+              display: grid;
+              grid-row: 1/2;
+              grid-column: 1/2;
+              width: 100%;
+              opacity: 1;
+            }
           }
+        }
+        .after {
+          opacity: 1;
         }
       }
     }
