@@ -147,9 +147,9 @@ async function renderWeather(search) {
     }
     removeNode("loadingWeather");
     let type = document.createElement("p");
-    type.innerText = `Local Weather: ${weatherData.weather[0].main}, ${weatherData.weather[0].description}`;
-    let actualCity = document.createElement("p");
-    actualCity.innerText = `City: ${weatherData.name}`;
+    type.innerText = `Weather: ${weatherData.weather[0].description}`;
+    let actualCity = document.createElement("h3");
+    actualCity.innerText = `${weatherData.name}`;
     let dateP = document.createElement("p");
     dateP.className = "date";
     let now = new Date();
@@ -157,18 +157,36 @@ async function renderWeather(search) {
     dateP.innerText = date.format(now, pattern);
     let temp = document.createElement("p");
     temp.className = "temp";
-    temp.innerText = `Temperature: ${weatherData.main.temp}°${checkUnits()}`;
+    temp.innerText = `Temp: ${weatherData.main.temp}°${checkUnits()}`;
+    let tempMin = document.createElement("p");
+    tempMin.className = "tempMin";
+    tempMin.innerText = `Min: ${weatherData.main.temp_min}°${checkUnits()}`;
+    let tempMax = document.createElement("p");
+    tempMax.className = "tempMax";
+    tempMax.innerText = `Max: ${weatherData.main.temp_max}°${checkUnits()}`;
+    let pressure = document.createElement("p");
+    pressure.className = "tempMax";
+    pressure.innerText = `Pressure: ${weatherData.main.pressure} hPa`;
     let humidity = document.createElement("p");
     humidity.className = "humidity";
     humidity.innerText = `Humidity: ${weatherData.main.humidity}%`;
     let icon = document.createElement("img");
     icon.src = `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`;
-    weatherCard.appendChild(dateP);
-    weatherCard.appendChild(actualCity);
+    let titleWrapper = document.createElement("div");
+    titleWrapper.id = "titleWrapper";
+    titleWrapper.appendChild(actualCity);
+    titleWrapper.appendChild(dateP);
+    weatherCard.appendChild(titleWrapper);
     weatherCard.appendChild(icon);
-    weatherCard.appendChild(type);
-    weatherCard.appendChild(temp);
-    weatherCard.appendChild(humidity);
+    let currentWeatherWrapper = document.createElement("div");
+    currentWeatherWrapper.id = "currentWeatherWrapper";
+    currentWeatherWrapper.appendChild(type);
+    currentWeatherWrapper.appendChild(temp);
+    currentWeatherWrapper.appendChild(humidity);
+    currentWeatherWrapper.appendChild(tempMax);
+    currentWeatherWrapper.appendChild(pressure);
+    currentWeatherWrapper.appendChild(tempMin);
+    weatherCard.appendChild(currentWeatherWrapper);
     currentWeather.appendChild(weatherCard);
     setTimeout(function () {
       weatherCard.className = "weatherCard after";
@@ -214,6 +232,8 @@ async function renderForecast(search) {
     let currentData;
     removeNode("loadingForecast");
     forecastWrapper.appendChild(forecast);
+    let minValue = weatherData.list[0].main.min_temp;
+    let maxValue = weatherData.list[0].main.max_temp;
     for (let i = 0; i < weatherData.list.length; i++) {
       let dateHour = document.createElement("p");
       let dateDay = document.createElement("p");
@@ -228,6 +248,20 @@ async function renderForecast(search) {
       let thisDay = date.format(dt, patternReduced);
       dateDay.innerText = thisDay;
       if (lastDay == thisDay) {
+        if (minValue > weatherData.list[i].main.temp_min) {
+          let minTemp = document.querySelector(`.min${thisDay}`);
+          minTemp.innerText = `Min:${
+            weatherData.list[i].main.temp_min
+          }°${checkUnits()}`;
+          minValue = weatherData.list[i].main.temp_min;
+        }
+        if (maxValue < weatherData.list[i].main.temp_max) {
+          let maxTemp = document.querySelector(`.max${thisDay}`);
+          maxTemp.innerText = `Max:${
+            weatherData.list[i].main.temp_max
+          }°${checkUnits()}`;
+          maxValue = weatherData.list[i].main.temp_max;
+        }
         let hourContainer = document.createElement("div");
         hourContainer.className = "hourContainer";
         let type = document.createElement("p");
@@ -282,9 +316,25 @@ async function renderForecast(search) {
             dataWrap.style.display = "grid";
             dataWrap.className = `dataWrap ${thisDay} active`;
             hourContainer.className = `hourContainer hourContainer${thisDay} active`;
-          }, 100);
+          }, 150);
         });
       } else {
+        let maxMin = document.createElement("div");
+        maxMin.className = `maxMin maxMin${thisDay}`;
+        let maxTemp = document.createElement("P");
+        maxTemp.className = `max max${thisDay}`;
+        let minTemp = document.createElement("P");
+        minTemp.className = `min min${thisDay}`;
+        maxTemp.innerText = `Max:${
+          weatherData.list[i].main.temp_max
+        }°${checkUnits()}`;
+        minValue = weatherData.list[i].main.temp_min;
+        maxValue = weatherData.list[i].main.temp_max;
+        minTemp.innerText = `Min:${
+          weatherData.list[i].main.temp_min
+        }°${checkUnits()}`;
+        maxMin.appendChild(maxTemp);
+        maxMin.appendChild(minTemp);
         let data = document.createElement("div");
         data.className = "data";
         currentData = data;
@@ -313,6 +363,7 @@ async function renderForecast(search) {
         dataWrap.style.display = "grid";
         weatherCard.appendChild(dateDay);
         weatherCard.appendChild(icon);
+        weatherCard.appendChild(maxMin);
         hourContainer.appendChild(dateHour);
         dataWrap.appendChild(type);
         dataWrap.appendChild(temp);
@@ -356,7 +407,7 @@ async function renderForecast(search) {
             dataWrap.style.display = "grid";
             dataWrap.className = `dataWrap ${thisDay} active`;
             hourContainer.className = `hourContainer hourContainer${thisDay} active`;
-          }, 100);
+          }, 150);
         });
         forecast.appendChild(weatherCard);
         setTimeout(function () {
