@@ -1,10 +1,12 @@
 import "./style.scss";
 import date from "date-and-time";
 import loadingImg from "./img/loading.gif";
+import background from "./img/dark-stormy-clouds.jpg";
 
 // api call example https://api.openweathermap.org/data/2.5/weather?q=London,uk&callback=test&appid=d11947c85c8c62e4c1cdf9c292dc17d0
 const APIkey = "d11947c85c8c62e4c1cdf9c292dc17d0";
 const main = document.getElementById("main");
+main.style.backgroundImage = `url(${background})`;
 let city = "London";
 let units = "metric";
 const postionParam = {
@@ -276,9 +278,9 @@ async function renderForecast(search) {
               wrap.className = `hourContainer hourContainer${thisDay}`;
             }
           });
-          dataWrap.style.display = "grid";
-          dataWrap.className = `dataWrap ${thisDay} active`;
           setTimeout(function () {
+            dataWrap.style.display = "grid";
+            dataWrap.className = `dataWrap ${thisDay} active`;
             hourContainer.className = `hourContainer hourContainer${thisDay} active`;
           }, 100);
         });
@@ -350,9 +352,9 @@ async function renderForecast(search) {
               wrap.className = `hourContainer hourContainer${thisDay}`;
             }
           });
-          dataWrap.style.display = "grid";
-          dataWrap.className = `dataWrap ${thisDay} active`;
           setTimeout(function () {
+            dataWrap.style.display = "grid";
+            dataWrap.className = `dataWrap ${thisDay} active`;
             hourContainer.className = `hourContainer hourContainer${thisDay} active`;
           }, 100);
         });
