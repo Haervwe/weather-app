@@ -128,6 +128,10 @@ async function cityForecast(search) {
 
 async function renderWeather(search) {
   const erase = document.getElementById("weatherCard");
+  if (erase != null) {
+    erase.parentNode.appendChild(loading("loadingWeather"));
+    erase.parentNode.removeChild(erase);
+  }
   const weatherCard = document.createElement("div");
   weatherCard.id = "weatherCard";
   try {
@@ -158,9 +162,6 @@ async function renderWeather(search) {
     weatherCard.appendChild(type);
     weatherCard.appendChild(temp);
     weatherCard.appendChild(humidity);
-    if (erase != null) {
-      erase.parentNode.removeChild(erase);
-    }
     return weatherCard;
   } catch (e) {
     console.log(e);
@@ -177,11 +178,17 @@ function loading(id) {
 
 function removeNode(id) {
   let node = document.getElementById(`${id}`);
-  node.parentNode.removeChild(node);
+  if (node != null) {
+    node.parentNode.removeChild(node);
+  }
 }
 
 async function renderForecast(search) {
   const erase = document.getElementById("forecast");
+  if (erase != null) {
+    erase.parentNode.appendChild(loading("loadingForecast"));
+    erase.parentNode.removeChild(erase);
+  }
   const forecast = document.createElement("div");
   forecast.id = "forecast";
   try {
@@ -304,9 +311,7 @@ async function renderForecast(search) {
         forecast.appendChild(weatherCard);
       }
     }
-    if (erase != null) {
-      erase.parentNode.removeChild(erase);
-    }
+
     return forecast;
   } catch (e) {
     console.log(e);
