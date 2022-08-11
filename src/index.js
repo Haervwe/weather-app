@@ -240,7 +240,7 @@ async function renderForecast(search) {
       dateDay.className = "day";
       let dt = date.parse(
         `${weatherData.list[i].dt_txt}`,
-        `YYYY-MM-DD hh:mm:ss`
+        `YYYY-MM-DD HH:mm:ss`
       );
       const pattern = date.compile("HH:mm");
       dateHour.innerText = `${date.format(dt, pattern)} hs.`;
@@ -250,16 +250,16 @@ async function renderForecast(search) {
       if (lastDay == thisDay) {
         if (minValue > weatherData.list[i].main.temp_min) {
           let minTemp = document.querySelector(`.min${thisDay}`);
-          minTemp.innerText = `Min:${
+          minTemp.innerText = `Min: ${
             weatherData.list[i].main.temp_min
-          }°${checkUnits()}`;
+          }° ${checkUnits()}`;
           minValue = weatherData.list[i].main.temp_min;
         }
         if (maxValue < weatherData.list[i].main.temp_max) {
           let maxTemp = document.querySelector(`.max${thisDay}`);
-          maxTemp.innerText = `Max:${
+          maxTemp.innerText = `Max: ${
             weatherData.list[i].main.temp_max
-          }°${checkUnits()}`;
+          }° ${checkUnits()}`;
           maxValue = weatherData.list[i].main.temp_max;
         }
         let hourContainer = document.createElement("div");
@@ -302,7 +302,7 @@ async function renderForecast(search) {
               wrap.className = `dataWrap ${thisDay}`;
               setTimeout(function () {
                 wrap.style.display = "none";
-              }, 200);
+              }, 600);
             }
           });
           let hourList = document.querySelectorAll(`.hourContainer${thisDay}`);
@@ -325,14 +325,14 @@ async function renderForecast(search) {
         maxTemp.className = `max max${thisDay}`;
         let minTemp = document.createElement("P");
         minTemp.className = `min min${thisDay}`;
-        maxTemp.innerText = `Max:${
+        maxTemp.innerText = `Max: ${
           weatherData.list[i].main.temp_max
-        }°${checkUnits()}`;
+        }° ${checkUnits()}`;
         minValue = weatherData.list[i].main.temp_min;
         maxValue = weatherData.list[i].main.temp_max;
-        minTemp.innerText = `Min:${
+        minTemp.innerText = `Min: ${
           weatherData.list[i].main.temp_min
-        }°${checkUnits()}`;
+        }° ${checkUnits()}`;
         maxMin.appendChild(maxTemp);
         maxMin.appendChild(minTemp);
         let data = document.createElement("div");
@@ -393,7 +393,7 @@ async function renderForecast(search) {
               wrap.className = `dataWrap ${thisDay}`;
               setTimeout(function () {
                 wrap.style.display = "none";
-              }, 200);
+              }, 600);
             }
           });
           let hourList = document.querySelectorAll(`.hourContainer${thisDay}`);
