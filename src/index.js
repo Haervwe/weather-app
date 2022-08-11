@@ -37,21 +37,14 @@ async function location() {
 }
 
 function showError() {
-  let lastError = document.getElementById("error");
-  if (lastError != null) {
-    lastError.parentNode.removeChild(lastError);
-  }
-  let errorDiv = document.createElement("div");
-  errorDiv.id = "error";
-  errorDiv.innerText = "Your search yielded no result.";
-  let remove = document.createElement("button");
-  remove.innerText = "X";
-  remove.style.backgroundColor = "red";
-  remove.addEventListener("click", () => {
-    errorDiv.parentNode.removeChild(errorDiv);
+  let search = document.getElementById("cityInt");
+  search.className = "error";
+  search.placeholder = "There`s been an error fetching your data.";
+  search.addEventListener("click", function removeError() {
+    search.className = "";
+    search.placeholder = "Mendoza";
+    search.removeEventListener("click", removeError);
   });
-  errorDiv.appendChild(remove);
-  main.appendChild(errorDiv);
 }
 
 async function localWeather() {
@@ -238,9 +231,8 @@ async function renderForecast(search) {
       let dateHour = document.createElement("p");
       let dateDay = document.createElement("p");
       dateDay.className = "day";
-      let dt = date.parse(
-        `${weatherData.list[i].dt_txt}`,
-        `YYYY-MM-DD HH:mm:ss`
+      let dt = new Date(
+        weatherData.list[i].dt * 1000 + weatherData.city.timezone * 1000
       );
       const pattern = date.compile("HH:mm");
       dateHour.innerText = `${date.format(dt, pattern)} hs.`;
@@ -265,9 +257,9 @@ async function renderForecast(search) {
         let hourContainer = document.createElement("div");
         hourContainer.className = "hourContainer";
         let type = document.createElement("p");
-        type.innerText = `Weather: ${weatherData.list[i].weather[0].description}`;
+        type.innerHTML = `Weather:<br> ${weatherData.list[i].weather[0].description}`;
         let temp = document.createElement("p");
-        temp.innerText = `Temp: ${
+        temp.innerHTML = `Temp: <br>${
           weatherData.list[i].main.temp
         }°${checkUnits()}`;
         let humidity = document.createElement("p");
@@ -347,9 +339,9 @@ async function renderForecast(search) {
         let hourContainer = document.createElement("div");
         hourContainer.className = `hourContainer hourContainer${thisDay} active`;
         let type = document.createElement("p");
-        type.innerText = `Weather: ${weatherData.list[i].weather[0].description}`;
+        type.innerHTML = `Weather: <br>${weatherData.list[i].weather[0].description}`;
         let temp = document.createElement("p");
-        temp.innerText = `Temp: ${
+        temp.innerHTML = `Temp: <br>${
           weatherData.list[i].main.temp
         }°${checkUnits()}`;
         let humidity = document.createElement("p");
@@ -440,10 +432,17 @@ function renderCity(search) {
 
 function userLocationBtn() {
   let btn = document.createElement("button");
-  btn.className = "userLocationBtn";
+  btn.id = "userLocationBtn";
+  btn.className = "formBtn";
   btn.innerText = "Local Weather";
   btn.type = "button";
   btn.addEventListener("click", renderLocal);
+  btn.addEventListener("click", () => {
+    btn.className = "formBtn after";
+    setTimeout(function () {
+      btn.className = "formBtn";
+    }, 300);
+  });
   return btn;
 }
 
@@ -465,17 +464,25 @@ function render() {
   cityInt.id = "cityInt";
   cityInt.type = "text";
   cityInt.placeholder = "Mendoza";
+  cityInt.autocomplete = "off";
   cityInt.name = "city";
   cityContainer.appendChild(label);
   cityContainer.appendChild(cityInt);
   form.appendChild(cityContainer);
   let submit = document.createElement("button");
-  submit.className = "submit";
+  submit.id = "submitBtn";
+  submit.className = "formBtn";
   submit.innerText = "Search City";
   submit.type = "button";
   submit.addEventListener("click", () => {
     let form = document.getElementById("selectCity");
     renderCity(form.city.value);
+  });
+  submit.addEventListener("click", () => {
+    submit.className = "formBtn after";
+    setTimeout(function () {
+      submit.className = "formBtn";
+    }, 200);
   });
   form.appendChild(submit);
   form.appendChild(userLocationBtn());
