@@ -1,15 +1,23 @@
+@font-face {
+  font-family: "font";
+  src: url(./SUNDAY.ttf);
+  font-weight: 1500;
+  font-style: bold;
+}
+
 * {
   user-select: none;
+  font-family: "font";
   box-sizing: border-box;
 }
 body {
   margin: 0%;
   padding: 0px;
   overflow-x: hidden;
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.493);
 }
 #main {
   display: grid;
-  //height: 100vh;
   background-repeat: no-repeat;
   background-size: cover;
   grid-template-rows: minmax(900px, 95vh) minmax(25px, 5vh);
