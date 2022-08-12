@@ -42,6 +42,7 @@ function showError() {
   search.placeholder = "There`s been an error fetching your data.";
   search.addEventListener("click", function removeError() {
     search.className = "";
+    search.innerText = "";
     search.placeholder = "Mendoza";
     search.removeEventListener("click", removeError);
   });
@@ -81,6 +82,13 @@ async function cityWeather(search) {
   }
   let cityWeather = await weather.json();
   console.log(cityWeather);
+  if (cityWeather.cod == "404") {
+    weather = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIkey}&units=${units}`
+    );
+    showError();
+    cityWeather = await weather.json();
+  }
   return cityWeather;
 }
 
@@ -118,6 +126,13 @@ async function cityForecast(search) {
   }
   let cityWeatherForecast = await weatherForecast.json();
   console.log(cityWeatherForecast);
+  if (cityWeatherForecast.cod == "404") {
+    weatherForecast = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}&units=${units}`
+    );
+    showError();
+    cityWeatherForecast = await weatherForecast.json();
+  }
   return cityWeatherForecast;
 }
 
